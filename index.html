@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michał — WordPress Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark: #231C07;
+    --light: #F7F4F3;
+    --red: #F24333;
+    --red-deep: #BA1B1D;
+    --blue: #3C91E6;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', serif;
+  }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--light);
+    color: var(--dark);
+    font-family: var(--mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.5;
+  }
+
+  /* HEADER */
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    padding: 2.5rem 3rem 2rem;
+    border-bottom: 1px solid var(--dark);
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .header-left {}
+
+  .name-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.75rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.7; }
+  }
+
+  .name-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dark);
+    opacity: 0.5;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 0.95;
+    color: var(--dark);
+    letter-spacing: -0.02em;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--red);
+  }
+
+  .header-right {
+    text-align: right;
+    padding-bottom: 0.5rem;
+  }
+
+  .avail {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dark);
+    opacity: 0.45;
+    margin-bottom: 0.4rem;
+  }
+
+  .contact-link {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--dark);
+    text-decoration: none;
+    border-bottom: 1px solid var(--red);
+    padding-bottom: 1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .contact-link:hover {
+    color: var(--red);
+  }
+
+  /* MAIN GRID */
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 120px);
+  }
+
+  /* LEFT PANEL */
+  .panel-left {
+    border-right: 1px solid var(--dark);
+    padding: 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.15s forwards;
+  }
+
+  .section-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--dark);
+    opacity: 0.15;
+  }
+
+  .bio-text {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--dark);
+  }
+
+  .bio-text strong {
+    font-weight: 400;
+    color: var(--red-deep);
+  }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--dark);
+    border: 1px solid var(--dark);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .skill-cell {
+    background: var(--light);
+    padding: 0.9rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+    cursor: default;
+  }
+
+  .skill-cell:hover {
+    background: var(--dark);
+  }
+
+  .skill-cell:hover .skill-name {
+    color: var(--light);
+  }
+
+  .skill-cell:hover .skill-icon {
+    color: var(--red);
+  }
+
+  .skill-icon {
+    font-size: 1rem;
+    color: var(--red-deep);
+    width: 18px;
+    flex-shrink: 0;
+    transition: color 0.2s;
+  }
+
+  .skill-name {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--dark);
+    transition: color 0.2s;
+  }
+
+  /* WHAT I DO */
+  .services-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--dark);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .service-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba(35,28,7,0.15);
+    transition: background 0.18s;
+  }
+
+  .service-item:last-child {
+    border-bottom: none;
+  }
+
+  .service-item:hover {
+    background: var(--dark);
+  }
+
+  .service-item:hover .service-name,
+  .service-item:hover .service-arrow {
+    color: var(--light);
+  }
+
+  .service-name {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--dark);
+    letter-spacing: 0.02em;
+    transition: color 0.18s;
+  }
+
+  .service-arrow {
+    font-size: 0.7rem;
+    color: var(--red);
+    transition: color 0.18s;
+  }
+
+  /* RIGHT PANEL */
+  .panel-right {
+    padding: 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.3s forwards;
+  }
+
+  /* STAT BLOCKS */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--dark);
+    border: 1px solid var(--dark);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .stat-block {
+    background: var(--light);
+    padding: 1.25rem 1rem;
+  }
+
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 2.4rem;
+    font-weight: 300;
+    color: var(--dark);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-num span {
+    color: var(--red);
+  }
+
+  .stat-desc {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.45;
+  }
+
+  /* STACK TAGS */
+  .stack-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .stack-tag {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 5px 11px;
+    border: 1px solid var(--dark);
+    border-radius: 2px;
+    color: var(--dark);
+    transition: all 0.18s;
+    cursor: default;
+  }
+
+  .stack-tag:hover {
+    background: var(--dark);
+    color: var(--light);
+    border-color: var(--dark);
+  }
+
+  .stack-tag.accent {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--light);
+  }
+
+  .stack-tag.accent:hover {
+    background: var(--red-deep);
+    border-color: var(--red-deep);
+  }
+
+  /* APPROACH */
+  .approach-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .approach-item {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .approach-num {
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--red);
+    padding-top: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .approach-text {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--dark);
+    opacity: 0.75;
+  }
+
+  /* CTA BLOCK */
+  .cta-block {
+    background: var(--dark);
+    border-radius: 4px;
+    padding: 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cta-heading {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 1.4rem;
+    color: var(--light);
+    line-height: 1.3;
+  }
+
+  .cta-heading em {
+    font-style: italic;
+    color: var(--red);
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--red);
+    color: var(--light);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    border-radius: 2px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.15s;
+    align-self: flex-start;
+  }
+
+  .cta-btn:hover {
+    background: var(--red-deep);
+    transform: translateY(-1px);
+  }
+
+  .cta-note {
+    font-size: 0.65rem;
+    color: var(--light);
+    opacity: 0.35;
+    letter-spacing: 0.05em;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--dark);
+    padding: 1.25rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.45s forwards;
+  }
+
+  .footer-left {
+    font-size: 0.65rem;
+    opacity: 0.35;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .footer-right {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .footer-link {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dark);
+    opacity: 0.4;
+    text-decoration: none;
+    transition: opacity 0.18s;
+  }
+
+  .footer-link:hover { opacity: 1; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 720px) {
+    header {
+      grid-template-columns: 1fr;
+      padding: 1.75rem 1.5rem 1.5rem;
+      gap: 1rem;
+    }
+    .header-right { text-align: left; }
+    main { grid-template-columns: 1fr; }
+    .panel-left { border-right: none; border-bottom: 1px solid var(--dark); padding: 2rem 1.5rem; }
+    .panel-right { padding: 2rem 1.5rem; }
+    footer { padding: 1.25rem 1.5rem; flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="name-tag">
+      <div class="dot"></div>
+      <span class="name-label">WordPress Developer</span>
+    </div>
+    <h1>Michał<br><em>KoDevMi</em></h1>
+  </div>
+  <div class="header-right">
+    <p class="avail">Let's talk</p>
+    <a href="mailto:michal@kodevmi.com" class="contact-link">michal@kodevmi.com</a>
+  </div>
+</header>
+
+<main>
+  <div class="panel-left">
+
+    <div>
+      <div class="section-label">About</div>
+      <p class="bio-text">
+        WordPress developer with <strong>10+ years</strong> building custom themes, plugins, and high-performance websites. I work with businesses that need reliable, clean, and well-maintained WordPress solutions — built to last.
+      </p>
+    </div>
+
+    <div>
+      <div class="section-label">Skills</div>
+      <div class="skills-grid">
+        <div class="skill-cell">
+          <span class="skill-icon">⬡</span>
+          <span class="skill-name">WordPress</span>
+        </div>
+        <div class="skill-cell">
+          <span class="skill-icon">⬡</span>
+          <span class="skill-name">Custom Plugins</span>
+        </div>
+        <div class="skill-cell">
+          <span class="skill-icon">⬡</span>
+          <span class="skill-name">Custom Themes</span>
+        </div>
+        <div class="skill-cell">
+          <span class="skill-icon">⬡</span>
+          <span class="skill-name">Elementor</span>
+        </div>
+        <div class="skill-cell">
+          <span class="skill-icon">⬡</span>
+          <span class="skill-name">React</span>
+        </div>
+        <div class="skill-cell">
+          <span class="skill-icon">⬡</span>
+          <span class="skill-name">JavaScript</span>
+        </div>
+        <div class="skill-cell">
+          <span class="skill-icon">⬡</span>
+          <span class="skill-name">PHP</span>
+        </div>
+        <div class="skill-cell">
+          <span class="skill-icon">⬡</span>
+          <span class="skill-name">Site Maintenance</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">What I do</div>
+      <ul class="services-list">
+        <li class="service-item">
+          <span class="service-name">Custom theme development</span>
+          <span class="service-arrow">→</span>
+        </li>
+        <li class="service-item">
+          <span class="service-name">Plugin development & integration</span>
+          <span class="service-arrow">→</span>
+        </li>
+        <li class="service-item">
+          <span class="service-name">Elementor builds & customization</span>
+          <span class="service-arrow">→</span>
+        </li>
+        <li class="service-item">
+          <span class="service-name">Performance & speed optimization</span>
+          <span class="service-arrow">→</span>
+        </li>
+        <li class="service-item">
+          <span class="service-name">Site security & maintenance</span>
+          <span class="service-arrow">→</span>
+        </li>
+        <li class="service-item">
+          <span class="service-name">React & JavaScript development</span>
+          <span class="service-arrow">→</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="panel-right">
+
+    <div>
+      <div class="section-label">At a glance</div>
+      <div class="stats-row">
+        <div class="stat-block">
+          <div class="stat-num">10<span>+</span></div>
+          <div class="stat-desc">Years WordPress</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">100<span>+</span></div>
+          <div class="stat-desc">Projects delivered</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">24<span>h</span></div>
+          <div class="stat-desc">Response time</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">100<span>%</span></div>
+          <div class="stat-desc">Remote friendly</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Stack</div>
+      <div class="stack-wrap">
+        <span class="stack-tag accent">WordPress</span>
+        <span class="stack-tag accent">PHP</span>
+        <span class="stack-tag accent">React</span>
+        <span class="stack-tag">JavaScript</span>
+        <span class="stack-tag">Elementor</span>
+        <span class="stack-tag">WooCommerce</span>
+        <span class="stack-tag">ACF</span>
+        <span class="stack-tag">REST API</span>
+        <span class="stack-tag">MySQL</span>
+        <span class="stack-tag">Git</span>
+        <span class="stack-tag">CSS / SCSS</span>
+        <span class="stack-tag">Gutenberg</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">How I work</div>
+      <div class="approach-list">
+        <div class="approach-item">
+          <span class="approach-num">01</span>
+          <span class="approach-text">Clean, documented code — built for maintainability, not just delivery.</span>
+        </div>
+        <div class="approach-item">
+          <span class="approach-num">02</span>
+          <span class="approach-text">Fast turnarounds with clear communication at every step.</span>
+        </div>
+        <div class="approach-item">
+          <span class="approach-num">03</span>
+          <span class="approach-text">Long-term thinking — I build sites that are easy to update and scale.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-block">
+      <p class="cta-heading">Got a web project<br>in mind? <em>Let's talk.</em></p>
+      <a href="mailto:michal@kodevmi.com" class="cta-btn">
+        Get in touch →
+      </a>
+      <p class="cta-note">michal@kodevmi.com · kodevmi.com</p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <span class="footer-left">© 2026 KoDevMi · Michał Konieczny</span>
+  <div class="footer-right">
+    <a href="mailto:michal@kodevmi.com" class="footer-link">Email</a>
+    <a href="https://kodevmi.com" class="footer-link">kodevmi.com</a>
+  </div>
+</footer>
+
+</body>
+</html>
